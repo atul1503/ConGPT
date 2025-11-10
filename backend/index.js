@@ -143,7 +143,13 @@ function pruneToRoot(rootId) {
 }
 
 function deleteSubtree(nodeId) {
+  if (!conversationState.nodes[nodeId]) {
+    return { deletedIds: [], rootId: null };
+  }
+
+  const rootId = conversationState.nodes[nodeId].rootId || getRootId(nodeId);
   const toDelete = [nodeId];
+  const deletedIds = [];
 
   while (toDelete.length > 0) {
     const currentId = toDelete.pop();
@@ -155,7 +161,10 @@ function deleteSubtree(nodeId) {
     });
 
     delete conversationState.nodes[currentId];
+    deletedIds.push(currentId);
   }
+
+  return { deletedIds, rootId };
 }
 
 function serializeState() {
@@ -255,6 +264,12 @@ app.delete("/messages/:id", (req, res) => {
         .json({ error: "Root messages cannot be deleted." });
     }
 
+    if (targetNode.role !== "user") {
+      return res
+        .status(400)
+        .json({ error: "Only user messages can be deleted." });
+    }
+
     const parentNode = conversationState.nodes[targetNode.parentId];
     if (parentNode) {
       parentNode.children = parentNode.children.filter(
@@ -262,8 +277,7 @@ app.delete("/messages/:id", (req, res) => {
       );
     }
 
-    const rootId = targetNode.rootId || getRootId(targetNode.parentId);
-    deleteSubtree(id);
+    const { rootId } = deleteSubtree(id);
     pruneToRoot(rootId);
 
     res.json({ state: serializeState() });

@@ -97,7 +97,7 @@ function PostCard({
             </button>
           )}
 
-          {isChild && onDeleteChild && (
+          {isChild && node.role === "user" && onDeleteChild && (
             <button
               className="post-card__action-btn post-card__delete"
               type="button"
