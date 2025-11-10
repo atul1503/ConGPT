@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import "./App.css";
 
 const defaultOrigin =
@@ -78,7 +80,13 @@ function PostCard({
             {formatRelativeTime(node.createdAt)}
           </span>
         </div>
-        <p className="post-card__content">{node.content}</p>
+        <ReactMarkdown
+          className="post-card__content"
+          remarkPlugins={[remarkGfm]}
+          linkTarget="_blank"
+        >
+          {node.content}
+        </ReactMarkdown>
         
         <div className="post-card__actions">
           {hasParent && !isChild && (

@@ -309,8 +309,112 @@
 .post-card__content {
   margin: 0 0 1rem;
   color: #0f172a;
-  white-space: pre-wrap;
   line-height: 1.6;
+  display: grid;
+  gap: 0.75rem;
+  white-space: normal;
+}
+
+.post-card__content p {
+  margin: 0;
+}
+
+.post-card__content h1,
+.post-card__content h2,
+.post-card__content h3,
+.post-card__content h4,
+.post-card__content h5,
+.post-card__content h6 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #0f172a;
+}
+
+.post-card__content h1 {
+  font-size: 1.35rem;
+}
+
+.post-card__content h2 {
+  font-size: 1.2rem;
+}
+
+.post-card__content h3 {
+  font-size: 1.1rem;
+}
+
+.post-card__content ul,
+.post-card__content ol {
+  margin: 0;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.post-card__content blockquote {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #cbd5f5;
+  background: #f8fafc;
+  color: #475569;
+  border-radius: 8px;
+}
+
+.post-card__content pre {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-family: "Fira Code", "SFMono-Regular", Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.35);
+}
+
+.post-card__content code {
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  padding: 0.15rem 0.35rem;
+  border-radius: 6px;
+  font-family: "Fira Code", "SFMono-Regular", Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+}
+
+.post-card__content pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+
+.post-card__content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.post-card__content table th,
+.post-card__content table td {
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.post-card__content table th {
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.post-card__content a {
+  color: #2563eb;
+  word-break: break-word;
+}
+
+.post-card__content a:hover {
+  text-decoration: underline;
 }
 
 .post-card__actions {
