@@ -236,7 +236,7 @@ function App() {
     <div className="app-shell">
       <header className="app-header">
         <div className="app-header__title">
-          <h1>Threaded LLM Replies</h1>
+          <h1>ConGPT</h1>
           {focusedPost && (
             <button 
               className="app-header__back"
