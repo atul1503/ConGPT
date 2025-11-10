@@ -270,7 +270,7 @@ function App() {
                 disabled={submitting || composer.trim().length === 0}
                 className="reply-composer__button"
               >
-                {submitting ? "Posting…" : "Post"}
+                {submitting ? "Asking…" : "Ask"}
               </button>
             </div>
           </div>
@@ -305,7 +305,7 @@ function App() {
                 disabled={submitting || composer.trim().length === 0}
                 className="reply-composer__button"
               >
-                {submitting ? "Posting…" : "Post"}
+                {submitting ? "Asking…" : "Ask"}
               </button>
             </div>
             
