@@ -130,7 +130,7 @@ cd /path/to/ConGPT/backend
 npm run serve
 ```
 
-Either command builds the frontend (`npm run build` inside `frontend/`) and starts Express on `http://localhost:8000` while serving the built static assets from the same origin. Because the React bundle defaults to `window.location.origin`, no extra configuration is required when both UI and API are hosted together.
+Either command builds the frontend (`npm run build` inside `frontend/`) before launching Express on `http://localhost:8000`. The root-level `npm run serve` keeps the Node process in the foreground so you can stop it with `Ctrl+C` like any other dev server. Because the React bundle defaults to `window.location.origin`, no extra configuration is required when both UI and API are hosted together.
 
 > **Note:** The backend only serves static files if the frontend build (`frontend/dist`) exists. If you run `npm run dev` in the frontend for hot reload, that dev server takes over and the backend skips static serving. For production, always run `npm run serve` (from root or backend) so the build folder is present.
 

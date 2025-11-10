@@ -5,9 +5,9 @@
   "description": "Root workspace for the ConGPT app",
   "scripts": {
     "dev": "npm run dev --prefix backend",
-    "serve": "npm run serve --prefix backend",
+    "serve": "npm run build --prefix frontend && node backend/index.js",
     "start": "npm start --prefix backend",
-    "build": "npm run build:frontend --prefix backend",
+    "build": "npm run build --prefix frontend",
     "lint": "npm run lint --prefix backend || true",
     "test": "npm test --prefix backend || true"
   },
