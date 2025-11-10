@@ -1,0 +1,17 @@
+{
+  "name": "congpt",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Root workspace for the ConGPT app",
+  "scripts": {
+    "dev": "npm run dev --prefix backend",
+    "serve": "npm run serve --prefix backend",
+    "start": "npm start --prefix backend",
+    "build": "npm run build:frontend --prefix backend",
+    "lint": "npm run lint --prefix backend || true",
+    "test": "npm test --prefix backend || true"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED"
+}

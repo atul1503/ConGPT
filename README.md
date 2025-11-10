@@ -121,13 +121,18 @@ Vite serves the UI at `http://localhost:5173` with hot module reload.
 ### Single-server run (backend serves frontend)
 
 ```bash
+# Option 1: from the repo root
+cd /path/to/ConGPT
+npm run serve
+
+# Option 2: from the backend directory (what npm run serve calls internally)
 cd /path/to/ConGPT/backend
-npm run serve        # builds the frontend and starts Express
+npm run serve
 ```
 
-This command runs `npm run build` inside `frontend/` and then serves the built assets alongside the API at `http://localhost:8000`. Because the React bundle defaults to `window.location.origin`, no extra configuration is required once it is served from the same origin as the API.
+Either command builds the frontend (`npm run build` inside `frontend/`) and starts Express on `http://localhost:8000` while serving the built static assets from the same origin. Because the React bundle defaults to `window.location.origin`, no extra configuration is required when both UI and API are hosted together.
 
-> **Note:** The backend only serves static files if the frontend build (`frontend/dist`) exists. If you run `npm run dev` in the frontend for hot reload, that dev server takes over and the backend skips static serving. For production, always run `npm run serve` (or any workflow that calls `npm run build:frontend`) so the build folder is present.
+> **Note:** The backend only serves static files if the frontend build (`frontend/dist`) exists. If you run `npm run dev` in the frontend for hot reload, that dev server takes over and the backend skips static serving. For production, always run `npm run serve` (from root or backend) so the build folder is present.
 
 ---
 
