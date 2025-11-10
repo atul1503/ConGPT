@@ -52,6 +52,15 @@ const conversationState = {
 
 function createNode({ role, content, parentId = null }) {
   const id = crypto.randomUUID();
+  let rootId = id;
+
+  if (parentId) {
+    const parent = conversationState.nodes[parentId];
+    if (parent) {
+      rootId = parent.rootId || parent.id;
+    }
+  }
+
   const node = {
     id,
     role,
@@ -59,6 +68,7 @@ function createNode({ role, content, parentId = null }) {
     parentId,
     children: [],
     createdAt: new Date().toISOString(),
+    rootId,
   };
   conversationState.nodes[id] = node;
   if (parentId) {
@@ -87,17 +97,11 @@ function getNodePath(nodeId) {
 }
 
 function getRootId(nodeId) {
-  let currentId = nodeId;
-  let lastSeen = nodeId;
-  while (currentId) {
-    const node = conversationState.nodes[currentId];
-    if (!node || !node.parentId) {
-      return node ? node.id : lastSeen;
-    }
-    lastSeen = node.parentId;
-    currentId = node.parentId;
+  const node = conversationState.nodes[nodeId];
+  if (!node) {
+    return nodeId;
   }
-  return lastSeen;
+  return node.rootId || node.id;
 }
 
 function pruneToRoot(rootId) {
