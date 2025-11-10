@@ -88,15 +88,19 @@ cp env.example .env
 
 | Variable              | Required | Default                 | Description |
 |-----------------------|----------|-------------------------|-------------|
-| `VITE_API_BASE_URL`   | ❌        | `http://localhost:8000` | Base URL of the backend API. Update if you change `PORT` or host. |
+| `VITE_API_BASE_URL`   | ❌        | `http://localhost:8000` | Base URL of the backend API. If omitted it falls back to `window.location.origin`. |
 
 ---
 
 ## Running Locally
 
-Use two terminal tabs—one for the backend and one for the frontend.
+Choose the workflow that fits your needs.
 
-### Backend
+### Development (hot reload)
+
+Use two terminal tabs—one for the backend APIs and another for the Vite dev server.
+
+#### Backend (APIs)
 
 ```bash
 cd /path/to/ConGPT/backend
@@ -113,6 +117,17 @@ npm run dev
 ```
 
 Vite serves the UI at `http://localhost:5173` with hot module reload.
+
+### Single-server run (backend serves frontend)
+
+```bash
+cd /path/to/ConGPT/backend
+npm run serve        # builds the frontend and starts Express
+```
+
+This command runs `npm run build` inside `frontend/` and then serves the built assets alongside the API at `http://localhost:8000`. Because the React bundle defaults to `window.location.origin`, no extra configuration is required once it is served from the same origin as the API.
+
+> **Note:** The backend only serves static files if the frontend build (`frontend/dist`) exists. If you run `npm run dev` in the frontend for hot reload, that dev server takes over and the backend skips static serving. For production, always run `npm run serve` (or any workflow that calls `npm run build:frontend`) so the build folder is present.
 
 ---
 

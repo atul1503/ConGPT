@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build:frontend": "npm --prefix ../frontend run build",
+    "serve": "npm run build:frontend && node index.js"
   },
   "keywords": [],
   "author": "",

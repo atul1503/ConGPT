@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
-  "http://localhost:8000";
+const defaultOrigin =
+  typeof window !== "undefined" && window.location?.origin
+    ? window.location.origin
+    : "";
+const envBase = import.meta.env.VITE_API_BASE_URL;
+const API_BASE = (envBase || defaultOrigin || "http://localhost:8000").replace(
+  /\/$/,
+  ""
+);
 
 const ROLE_META = {
   user: { label: "You", badge: "U" },

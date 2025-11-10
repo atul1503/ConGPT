@@ -3,6 +3,8 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const OpenAI = require("openai");
 const crypto = require("crypto");
+const path = require("path");
+const fs = require("fs");
 
 dotenv.config();
 
@@ -143,11 +145,12 @@ function pruneToRoot(rootId) {
 }
 
 function deleteSubtree(nodeId) {
-  if (!conversationState.nodes[nodeId]) {
+  const node = conversationState.nodes[nodeId];
+  if (!node) {
     return { deletedIds: [], rootId: null };
   }
 
-  const rootId = conversationState.nodes[nodeId].rootId || getRootId(nodeId);
+  const rootId = node.rootId || getRootId(nodeId);
   const toDelete = [nodeId];
   const deletedIds = [];
 
@@ -288,6 +291,22 @@ app.delete("/messages/:id", (req, res) => {
       .json({ error: "Failed to delete message.", details: error.message });
   }
 });
+
+const frontendDist = path.resolve(__dirname, "../frontend/dist");
+
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.use((req, res, next) => {
+    if (req.method !== "GET") {
+      return next();
+    }
+    const accept = req.headers.accept || "";
+    if (!accept.includes("text/html")) {
+      return next();
+    }
+    return res.sendFile(path.join(frontendDist, "index.html"));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
