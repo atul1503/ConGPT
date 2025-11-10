@@ -142,6 +142,22 @@ function pruneToRoot(rootId) {
   conversationState.rootIds = [rootId];
 }
 
+function deleteSubtree(nodeId) {
+  const toDelete = [nodeId];
+
+  while (toDelete.length > 0) {
+    const currentId = toDelete.pop();
+    const node = conversationState.nodes[currentId];
+    if (!node) continue;
+
+    (node.children || []).forEach((childId) => {
+      toDelete.push(childId);
+    });
+
+    delete conversationState.nodes[currentId];
+  }
+}
+
 function serializeState() {
   return {
     rootIds: conversationState.rootIds,
@@ -221,6 +237,41 @@ app.post("/messages", async (req, res) => {
     res
       .status(500)
       .json({ error: "Failed to process message.", details: error.message });
+  }
+});
+
+app.delete("/messages/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const targetNode = conversationState.nodes[id];
+
+    if (!targetNode) {
+      return res.status(404).json({ error: "Message not found." });
+    }
+
+    if (!targetNode.parentId) {
+      return res
+        .status(400)
+        .json({ error: "Root messages cannot be deleted." });
+    }
+
+    const parentNode = conversationState.nodes[targetNode.parentId];
+    if (parentNode) {
+      parentNode.children = parentNode.children.filter(
+        (childId) => childId !== id
+      );
+    }
+
+    const rootId = targetNode.rootId || getRootId(targetNode.parentId);
+    deleteSubtree(id);
+    pruneToRoot(rootId);
+
+    res.json({ state: serializeState() });
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to delete message.", details: error.message });
   }
 });
 

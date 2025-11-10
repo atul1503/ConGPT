@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 const API_BASE =
@@ -40,7 +40,16 @@ function formatRelativeTime(isoString) {
   return formatter.format(days, "day");
 }
 
-function PostCard({ node, nodes, onExpandPost, onGoToParent, isParent = false, isChild = false }) {
+function PostCard({
+  node,
+  nodes,
+  onExpandPost,
+  onGoToParent,
+  onDeleteChild,
+  isParent = false,
+  isChild = false,
+  disableActions = false,
+}) {
   const meta = ROLE_META[node.role];
   const children = (node.children || [])
     .map((childId) => nodes[childId])
@@ -71,6 +80,7 @@ function PostCard({ node, nodes, onExpandPost, onGoToParent, isParent = false, i
               className="post-card__action-btn post-card__parent"
               type="button"
               onClick={() => onGoToParent(node.parentId)}
+              disabled={disableActions}
             >
               ↑ Go to parent
             </button>
@@ -81,8 +91,20 @@ function PostCard({ node, nodes, onExpandPost, onGoToParent, isParent = false, i
               className="post-card__action-btn post-card__expand"
               type="button"
               onClick={() => onExpandPost(node.id)}
+              disabled={disableActions}
             >
               {expandLabel}
+            </button>
+          )}
+
+          {isChild && onDeleteChild && (
+            <button
+              className="post-card__action-btn post-card__delete"
+              type="button"
+              onClick={() => onDeleteChild(node.id)}
+              disabled={disableActions}
+            >
+              Delete
             </button>
           )}
         </div>
@@ -96,10 +118,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [composer, setComposer] = useState("");
-  const [replyTarget, setReplyTarget] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [inlineReplyTarget, setInlineReplyTarget] = useState(null);
-  const [inlineReplyText, setInlineReplyText] = useState("");
   const [focusedPost, setFocusedPost] = useState(null); // null = show all threads
 
   useEffect(() => {
@@ -121,11 +140,6 @@ function App() {
 
     loadThreads();
   }, []);
-
-  const replyTargetNode = useMemo(
-    () => (replyTarget ? state.nodes[replyTarget] : null),
-    [replyTarget, state.nodes]
-  );
 
   const sendMessage = async (content, parentId = null) => {
     const response = await fetch(`${API_BASE}/messages`, {
@@ -166,37 +180,6 @@ function App() {
     }
   };
 
-  const handleStartInlineReply = (nodeId) => {
-    setInlineReplyTarget(nodeId);
-    setInlineReplyText("");
-  };
-
-  const handleCancelInlineReply = () => {
-    setInlineReplyTarget(null);
-    setInlineReplyText("");
-  };
-
-  const handleSubmitInlineReply = async (parentId) => {
-    const content = inlineReplyText.trim();
-    if (!content) return;
-
-    try {
-      setSubmitting(true);
-      setError(null);
-      await sendMessage(content, parentId);
-      setInlineReplyTarget(null);
-      setInlineReplyText("");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleNewThread = () => {
-    setReplyTarget(null);
-  };
-
   const handleExpandPost = (nodeId) => {
     setFocusedPost(nodeId);
   };
@@ -207,6 +190,28 @@ function App() {
 
   const handleBackToAll = () => {
     setFocusedPost(null);
+  };
+
+  const handleDeleteChild = async (childId) => {
+    try {
+      setSubmitting(true);
+      setError(null);
+      const response = await fetch(`${API_BASE}/messages/${childId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error || "Failed to delete message.");
+      }
+      const payload = await response.json();
+      if (payload.state) {
+        setState(payload.state);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // Get current parent and its children
@@ -285,8 +290,9 @@ function App() {
                   onExpandPost={handleExpandPost}
                   onGoToParent={handleGoToParent}
                   isParent={true}
+                  disableActions={submitting}
                 />
-              </div>
+      </div>
             )}
             
             {/* Reply Composer */}
@@ -306,7 +312,7 @@ function App() {
                 className="reply-composer__button"
               >
                 {submitting ? "Asking…" : "Ask"}
-              </button>
+        </button>
             </div>
             
             {/* Children Posts */}
@@ -320,6 +326,8 @@ function App() {
                       onExpandPost={handleExpandPost}
                       onGoToParent={handleGoToParent}
                       isChild={true}
+                      onDeleteChild={handleDeleteChild}
+                      disableActions={submitting}
                     />
                   </div>
                 ))}
@@ -328,7 +336,7 @@ function App() {
           </div>
         )}
       </main>
-    </div>
+      </div>
   );
 }
 

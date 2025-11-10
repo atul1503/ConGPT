@@ -361,6 +361,16 @@
   color: #047857;
 }
 
+.post-card__delete {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.post-card__delete:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
 .inline-reply {
   margin-top: 1rem;
   padding: 1rem;
